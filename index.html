@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Test</title>
+    <script>
+        function main() {
+            console.log('main')
+            const fetchPromise = fetch('http://ip.jsontest.com') //gives us a full response back
+            const responsePromise = fetchPromise.then(response => {
+                console.log(response)
+                return response.json() //gives us just the body back and turning it into json object
+            })
+            responsePromise.then(json => document.getElementById("ip").innerText = json.ip)
+        }
+        main()
+    </script>
+</head>
+<body>
+    <div id="ip"></div>
+</body>
+</html>
