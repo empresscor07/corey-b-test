@@ -25,6 +25,18 @@
                 console.log(json)
                 document.getElementById("header").innerText = json.Host + ', ' + json.Accept
             })
+
+            //prints ipv6 ip
+            fetch('http://validate.jsontest.com/?json={"key":"value"}')
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json)
+                    document.getElementById('validate').innerText = json.validate
+                })
+
+            fetch('http://code.jsontest.com')
+                .then(response => response.text()) // just wait for body to come in and don't convert to json.
+                .then(text => document.getElementById("arbitrary").innerText = text)
         }
         main()
     </script>
@@ -32,5 +44,7 @@
 <body>
     <div id="ip"></div>
     <div id="header"></div>
+    <div id="validate"></div>
+    <div id="arbitrary"></div>
 </body>
 </html>
