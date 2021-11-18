@@ -7,36 +7,55 @@
         function main() {
             console.log('main')
 
+            //handles error when promise not returned as expected
+            //call as the second argument to .then() function (the argument is when the promise is RESOLVED, the second is when it is REJECTED
+            function handleError(error){
+                console.log(error)
+            }
+
+            //EXPLAINING PROMISES AND .JSON() vs .TEXT()
+            //Make a request to ip.jsontest.com
+            //fetch will 'promise to give us results back'
+            //store the promise n the 'fetchPromise variable
+            const fetchPromise = fetch('http://headers.jsontest.com/') //gives us a full response back
+            //create a function to specify what to do when the response arrives - it will be in the queue until the response actually returns .then we run it
+            const responsePromise = fetchPromise.then(response => {
+                //the body will just be a readable stream at this point - here we just print the response object to console, which will only show readable stream under body
+                console.log(response) //this is just like the metadata - actual data still coming in
+                // get a promise to retrieve the body (or the actual meaningful data) of the response
+                return response.json() //gives us just the body back and turning it into javascript object if it is written in proper json
+            }, handleError)
+            // queue the function to be called when the body arrives
+            responsePromise.then(json => {
+                //logging the content of the body to the console
+                console.log(json)
+                //putting the content of the body into our div HTML
+                document.getElementById("header").innerText = json.Host + ', ' + json.Accept
+            }, handleError)
+
+
             //prints ipv6 ip
             fetch('http://ip.jsontest.com/')
-                .then(response => response.json())
+                //took the response, recognized it as correctly formatted json and converted it into a javascrip object rather than just a text string
+                //can now reference fields of the object (ex. json.ip vs just json)
+                .then(response => response.json(), handleError)
                 .then(json => {
                     console.log(json)
                     document.getElementById('ip').innerText = json.ip
-                })
-
-            //prints the headers
-            const fetchPromise = fetch('http://headers.jsontest.com/') //gives us a full response back
-            const responsePromise = fetchPromise.then(response => {
-                console.log(response)
-                return response.json() //gives us just the body back and turning it into json object
-            })
-            responsePromise.then(json => {
-                console.log(json)
-                document.getElementById("header").innerText = json.Host + ', ' + json.Accept
-            })
+                }, handleError)
 
             //prints ipv6 ip
             fetch('http://validate.jsontest.com/?json={"key":"value"}')
-                .then(response => response.json())
+                .then(response => response.json(), handleError)
                 .then(json => {
                     console.log(json)
                     document.getElementById('validate').innerText = json.validate
-                })
+                }, handleError)
 
             fetch('http://code.jsontest.com')
-                .then(response => response.text()) // just wait for body to come in and don't convert to json.
-                .then(text => document.getElementById("arbitrary").innerText = text)
+                .then(response => response.text(), handleError) // just wait for body to come in and don't convert to json just read as text instead
+                // (ie not expecting the body to contain JSON here)
+                .then(text => {document.getElementById("arbitrary").innerText = text}, handleError)
         }
         main()
     </script>
